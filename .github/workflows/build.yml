@@ -14,23 +14,9 @@ jobs:
       - name: Unzip
         run: |
           unzip -o *.zip
-          ls
+          ls -la
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-
-      - name: Pub Get
-        working-directory: ./PerfMTK-Manager-zh
-        run: flutter pub get
-
-      - name: Build APK
-        working-directory: ./PerfMTK-Manager-zh
-        run: flutter build apk --debug
-
-      - name: Upload
-        uses: actions/upload-artifact@v4
-        with:
-          name: apk
-          path: ./PerfMTK-Manager-zh/build/app/outputs/flutter-apk/app-debug.apk
