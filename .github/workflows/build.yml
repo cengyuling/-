@@ -20,3 +20,17 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+
+      - name: Pub Get
+        working-directory: ./PerfMTK-Manager
+        run: flutter pub get
+
+      - name: Build APK
+        working-directory: ./PerfMTK-Manager
+        run: flutter build apk --debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: PerfMTK-Manager-debug-apk
+          path: ./PerfMTK-Manager/build/app/outputs/flutter-apk/app-debug.apk
