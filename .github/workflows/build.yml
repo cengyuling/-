@@ -1,44 +1,40 @@
 name: Build Debug APK
-on:
-  workflow_dispatch:
-  push:
-    branches: [ main ]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Unzip
-        run: |
-          unzip -o *.zip
-          ls -la
-
-      - name: Setup JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-      - name: 导出JDK变量给Gradle
-        run: echo "ORG_GRADLE_PROJECT_javaHome=$JAVA_HOME" >> $GITHUB_ENV
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-
-      - name: Pub Get
-        working-directory: ./PerfMTK-Manager
-        run: flutter pub get
-
-      - name: Build APK
-        working-directory: ./PerfMTK-Manager
-        run: flutter build apk --debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: PerfMTK-Manager-debug-apk
-          path: ./PerfMTK-Manager/build/app/outputs/flutter-apk/app-debug.apk
+ on:
+   workflow_dispatch:
+   push:
+     branches: [ main ]
+ jobs:
+   build:
+     runs-on: ubuntu-latest
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v4
+       - name: Unzip
+         run: |
+           unzip -o *.zip
+           ls -la
+       - name: Setup JDK 17
+         uses: actions/setup-java@v4
+         with:
+           java-version: '17'
+           distribution: 'temurin'
+       - name: Setup Flutter
+         uses: subosito/flutter-action@v2
+         with:
+           channel: stable
+       # 重点：删除项目gradle.properties里面自带的javaHome配置！
+       - name: Remove hardcoded javaHome in gradle.properties
+         working-directory: ./PerfMTK-Manager/android
+         run: |
+           sed -i '/org.gradle.java.home/d' gradle.properties || true
+       - name: Pub Get
+         working-directory: ./PerfMTK-Manager
+         run: flutter pub get
+       - name: Build APK
+         working-directory: ./PerfMTK-Manager
+         run: flutter build apk --debug
+       - name: Upload APK
+         uses: actions/upload-artifact@v4
+         with:
+           name: PerfMTK-Manager-debug-apk
+           path: ./PerfMTK-Manager/build/app/outputs/flutter-apk/app-debug.apk
