@@ -1,9 +1,8 @@
 name: Build Debug APK (中文汉化版)
-
 on:
   workflow_dispatch:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
 
 jobs:
   build:
@@ -12,37 +11,27 @@ jobs:
       - name: 检出仓库
         uses: actions/checkout@v4
 
-      - name: 解压源码（若上传的是 zip 包）
+      - name: 解压源码包
         run: |
-          ZIP=$(ls *.zip 2>/dev/null | head -1)
-          if [ -n "$ZIP" ]; then
-            echo "发现源码包: $ZIP"
-            unzip -o "$ZIP"
-          fi
-          if [ -f pubspec.yaml ]; then
-            SRC="."
-          else
-            SRC=$(dirname "$(find . -name pubspec.yaml -not -path '*/build/*' | head -1)")
-          fi
-          echo "SRC_DIR=$SRC" >> "$GITHUB_ENV"
-          echo "源码目录: $SRC"
+          unzip -o *.zip
+          ls -la
 
-      - name: 安装 Flutter Stable
+      - name: 安装Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          cache: true
 
-      - name: 拉取依赖
-        working-directory: ${{ env.SRC_DIR }}
+      - name: 进入项目文件夹，安装依赖
+        working-directory: ./PerfMTK-Manager-zh
         run: flutter pub get
 
-      - name: 构建 Debug APK（调试签名，可直接安装）
-        working-directory: ${{ env.SRC_DIR }}
+      - name: 编译Debug APK
+        working-directory: ./PerfMTK-Manager-zh
         run: flutter build apk --debug
 
-      - name: 上传 APK 产物
+      - name: 上传APK
         uses: actions/upload-artifact@v4
         with:
-          name: PerfMTK-Manager-zh-debug
-          path: ${{ env.SRC_DIR }}/build/app/outputs/flutter-apk/app-debug.apk
+          name: PerfMTK-Manager-zh-apk
+          path: ./PerfMTK-Manager-zh/build/app/outputs/flutter-apk/app-debug.apk
+concurrency: 
