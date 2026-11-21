@@ -21,15 +21,13 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+      - name: 导出JDK变量给Gradle
+        run: echo "ORG_GRADLE_PROJECT_javaHome=$JAVA_HOME" >> $GITHUB_ENV
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-
-      - name: Tell Flutter to use this JDK17
-        working-directory: ./PerfMTK-Manager
-        run: flutter config --jdk-dir $JAVA_HOME
 
       - name: Pub Get
         working-directory: ./PerfMTK-Manager
