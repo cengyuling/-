@@ -1,4 +1,4 @@
-name: Build Debug APK (中文汉化版)
+name: Build Debug APK
 on:
   workflow_dispatch:
   push:
@@ -8,30 +8,29 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: 检出仓库
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: 解压源码包
+      - name: Unzip
         run: |
           unzip -o *.zip
-          ls -la
+          ls
 
-      - name: 安装Flutter
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
 
-      - name: 进入项目文件夹，安装依赖
+      - name: Pub Get
         working-directory: ./PerfMTK-Manager-zh
         run: flutter pub get
 
-      - name: 编译Debug APK
+      - name: Build APK
         working-directory: ./PerfMTK-Manager-zh
         run: flutter build apk --debug
 
-      - name: 上传APK
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: PerfMTK-Manager-zh-apk
+          name: apk
           path: ./PerfMTK-Manager-zh/build/app/outputs/flutter-apk/app-debug.apk
-concurrency: 
