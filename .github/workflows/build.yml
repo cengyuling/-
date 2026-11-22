@@ -34,7 +34,7 @@ jobs:
           channel: stable
 
       - name: Accept Android SDK Licenses
-        run: flutter doctor --android-licenses --yes
+        run: yes | flutter doctor --android-licenses
 
       - name: Remove hardcoded javaHome in gradle.properties
         working-directory: ./PerfMTK-Manager/android
