@@ -23,20 +23,18 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Android SDK & NDK
-        uses: android-actions/setup-android@v3
+      - name: Install NDK r26d
+        uses: nttld/setup-ndk@v1
         with:
-          accept-android-sdk-licenses: true
-          packages: |
-            ndk;26.3.11579253
-            platform-tools
-            build-tools;34.0.0
-            platforms;android-34
+          ndk-version: r26d
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+
+      - name: Accept Android SDK Licenses
+        run: flutter doctor --android-licenses --yes
 
       - name: Remove hardcoded javaHome in gradle.properties
         working-directory: ./PerfMTK-Manager/android
@@ -49,7 +47,7 @@ jobs:
 
       - name: Build APK
         working-directory: ./PerfMTK-Manager
-        run: flutter build apk --debug --gradle-args=--stacktrace
+        run: flutter build apk --debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
